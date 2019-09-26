@@ -1,0 +1,50 @@
+### 1. トークン取得
+POST https://account.uipath.com/oauth/token HTTP/1.1
+Content-Type: application/json
+
+{
+    "grant_type": "authorization_code",
+    "code": "[Authorization code]",
+    "redirect_uri": "https://account.uipath.com/mobile",
+    "code_verifier": "[Code verifier]",
+    "client_id": "5v7PmPJL6FOGu6RB8I1Y4adLBhIwovQN"
+}
+
+### 2. サービスインスタンス識別子取得
+GET https://platform.uipath.com/cloudrpa/api/getAccountsForUser HTTP/1.1
+Authorization: Bearer [id_token]
+
+### 3. インスタンス論理名取得
+GET https://platform.uipath.com/cloudrpa/api/account/[account_logical_name]/getAllServiceInstances HTTP/1.1
+Authorization: Bearer [id_token]
+
+### 4. ReleaseKey取得
+GET https://platform.uipath.com/odata/Releases HTTP/1.1
+Authorization: Bearer [access token]
+X-UIPATH-TenantName: [service_instance_logical_name]
+
+### 5. ジョブ実行
+POST https://platform.uipath.com/odata/Jobs/UiPath.Server.Configuration.OData.StartJobs HTTP/1.1
+Authorization: Bearer [access token]
+X-UIPATH-TenantName: [service_instance_logical_name]
+Content-Type: application/json
+
+{
+  "startInfo": {
+    "ReleaseKey": "[ReleaseKey]",
+    "Strategy": "All",
+    "RobotIds": [],
+    "NoOfRobots": 0,
+    "InputArguments": "{\"message\":\"コマンドから実行\"}"
+  }
+}
+
+### 6. トークンリフレッシュ
+POST https://account.uipath.com/oauth/token HTTP/1.1
+Content-Type: application/json
+
+{
+  "grant_type": "refresh_token",
+  "client_id": "5v7PmPJL6FOGu6RB8I1Y4adLBhIwovQN",
+  "refresh_token": "[refresh_token]"
+}

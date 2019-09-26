@@ -1,8 +1,10 @@
 const line = require('@line/bot-sdk');
 const express = require('express');
+const serverless = require('serverless-http');
 const Util = require('./util.js');
 require('dotenv').config();
 
+const router = express.Router();
 // 環境変数からチャネルアクセストークンとチャネルシークレットを取得する
 const config = {
   channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN,
@@ -14,14 +16,14 @@ const client = new line.Client(config);
 // Express アプリを生成する
 const app = express();
 
-app.post('/linebot', line.middleware(config), (req, res) => {
+router.post('/linebot', line.middleware(config), (req, res) => {
   if (!Array.isArray(req.body.events)) {
       return res.status(500).end();
   }
   // handle each event
   Promise
       .all(req.body.events.map(handleEvent))
-      .then(() => res.end())
+      .then((result) => res.json(result))
       .catch((err) => {
           console.error(err);
           res.status(500).end();
@@ -54,7 +56,6 @@ async function handleEvent(event) {
 }
 
 // サーバを起動する
-const port = 3000;
-app.listen(port, () => {
-  console.log(`Listening on ${port}`);
-});
+app.use('/.netlify/functions/index', router);
+module.exports = app;
+module.exports.handler = serverless(app);

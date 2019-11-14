@@ -3,6 +3,7 @@
 @Code_verifier=XXXXXXXX
 @id_token=XXXXXX
 @accountLogicalName=XXXXX
+@serviceInstanceName=XXXXXXXXXXXX
 @serviceInstanceLogicalName=XXXXXXXXXXXXXXXX
 @access_token=XXXXXXXXXXXX
 @ReleaseKey=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
@@ -29,12 +30,12 @@ GET https://platform.uipath.com/cloudrpa/api/account/{{accountLogicalName}}/getA
 Authorization: Bearer {{id_token}}
 
 ### 4. ReleaseKey取得
-GET https://platform.uipath.com/odata/Releases HTTP/1.1
+GET https://platform.uipath.com/{{accountLogicalName}}/{{serviceInstanceName}}/odata/Releases HTTP/1.1
 Authorization: Bearer {{access_token}}
 X-UIPATH-TenantName: {{serviceInstanceLogicalName}}
 
 ### 5. ジョブ実行
-POST https://platform.uipath.com/odata/Jobs/UiPath.Server.Configuration.OData.StartJobs HTTP/1.1
+POST https://platform.uipath.com/{{accountLogicalName}}/{{serviceInstanceName}}/odata/Jobs/UiPath.Server.Configuration.OData.StartJobs HTTP/1.1
 Authorization: Bearer {{access_token}}
 X-UIPATH-TenantName: {{serviceInstanceLogicalName}}
 Content-Type: application/json
